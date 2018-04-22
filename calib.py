@@ -6,7 +6,7 @@ import math
 from array import array
 
 #input file as created from calib.gnuplot
-inputFile='calib.dat'
+inputFile='data/calib.dat'
 
 r.gROOT.Reset()
 r.gROOT.SetStyle("Plain")

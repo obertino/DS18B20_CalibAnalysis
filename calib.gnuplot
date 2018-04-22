@@ -29,7 +29,7 @@ start=system(command)
 
 #set fit logfile
 
-set table "calib.dat"
+set table "data/calib.dat"
 #set output "plots/temp.png"
 set style line 1 lc rgb '#0060ad' lt 1 lw 2 pt 7 pi -1 ps 1.5
 
