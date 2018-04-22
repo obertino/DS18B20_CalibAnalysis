@@ -1,3 +1,6 @@
+# run the macro using
+# gnuplot -e "filename='$1'" calib.gnuplot
+
 #set xdata time
 #set timefmt "%d/%m/%Y %H:%M:%S"
 #set format x "%M:%S"
@@ -15,19 +18,24 @@ set grid
 
 set datafile separator ";"
 
+if (!exists("filename")) filename='calibrazione.dat'
+print "Using ",filename
+
+#set macros
+
 #get start time from first measurement
-start=system("awk -F ';' 'FNR == 1 {print $1}' calibrazione_ghiaccio.dat")
+command=sprintf("awk -F ';' 'FNR == 1 {print $1}' %s", filename)
+start=system(command)
 
 #set fit logfile
 
-if (!exists("filename")) filename='calibrazione.dat'
-
-#print strptime("%d/%m/%Y %H:%M:%S",start)
 set table "calib.dat"
 #set output "plots/temp.png"
 set style line 1 lc rgb '#0060ad' lt 1 lw 2 pt 7 pi -1 ps 1.5
-#fit t(x) filename using (strptime("%d/%m/%Y %H:%M:%S",strcol(1))-strptime("%d/%m/%Y %H:%M:%S",start)):3:(0.1) via a,b,c,d
-#plot time in s from first measurement
-plot filename using (strptime("%d/%m/%Y %H:%M:%S",strcol(1))-strptime("%d/%m/%Y %H:%M:%S",start)):3 w linespoints ls 1 t "DS18B20_1"
-unset table
 
+#fit t(x) filename using (strptime("%d/%m/%Y %H:%M:%S",strcol(1))-strptime("%d/%m/%Y %H:%M:%S",start)):3:(0.1) via a,b,c,d
+
+#plot temp vs time (seconds from first measurement)
+plot filename using (strptime("%d/%m/%Y %H:%M:%S",strcol(1))-strptime("%d/%m/%Y %H:%M:%S",start)):3 w linespoints ls 1 t "DS18B20_1"
+
+unset table
