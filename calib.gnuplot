@@ -19,7 +19,8 @@ set grid
 set datafile separator ";"
 
 if (!exists("filename")) filename='calibrazione.dat'
-print "Using ",filename
+if (!exists("nsensors")) nsensors=1
+print "Using ",filename," with nsensors ",nsensors
 
 #set macros
 
@@ -29,13 +30,19 @@ start=system(command)
 
 #set fit logfile
 
-set table "data/calib.dat"
+n=2
+
 #set output "plots/temp.png"
 set style line 1 lc rgb '#0060ad' lt 1 lw 2 pt 7 pi -1 ps 1.5
 
 #fit t(x) filename using (strptime("%d/%m/%Y %H:%M:%S",strcol(1))-strptime("%d/%m/%Y %H:%M:%S",start)):3:(0.1) via a,b,c,d
 
 #plot temp vs time (seconds from first measurement)
-plot filename using (strptime("%d/%m/%Y %H:%M:%S",strcol(1))-strptime("%d/%m/%Y %H:%M:%S",start)):3 w linespoints ls 1 t "DS18B20_1"
-
-unset table
+do for [ii=1:nsensors]{
+   command=sprintf("awk -F ';' 'FNR == 1 {print $%i}' %s",2*ii,filename)
+   sensor_name=system(command)	
+   print "Extracting data for sensor ",ii," address ",sensor_name
+   set table "data/calib_".ii.".dat"
+   plot filename using (strptime("%d/%m/%Y %H:%M:%S",strcol(1))-strptime("%d/%m/%Y %H:%M:%S",start)):(column(1+2*ii)) w linespoints ls 1 t "DS18B20_".sensor_name
+   unset table
+}
