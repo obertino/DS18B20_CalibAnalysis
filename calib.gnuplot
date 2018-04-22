@@ -1,5 +1,5 @@
 # run the macro using
-# gnuplot -e "filename='$1'" calib.gnuplot
+# gnuplot -e "filename='$1'"  -e "nsensors='$2'" calib.gnuplot
 
 #set xdata time
 #set timefmt "%d/%m/%Y %H:%M:%S"
@@ -29,8 +29,6 @@ command=sprintf("awk -F ';' 'FNR == 1 {print $1}' %s", filename)
 start=system(command)
 
 #set fit logfile
-
-n=2
 
 #set output "plots/temp.png"
 set style line 1 lc rgb '#0060ad' lt 1 lw 2 pt 7 pi -1 ps 1.5
